@@ -26,7 +26,7 @@ function BookCard({ book, index }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay: index * 0.03, type: "spring", stiffness: 120, damping: 18 }}
     >
-      <Card className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white/90 shadow-sm">
+      <Card className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white/90 shadow-sm w-full">
         <CardHeader className="p-0">
           <div
             className="relative overflow-hidden bg-slate-100 w-full"

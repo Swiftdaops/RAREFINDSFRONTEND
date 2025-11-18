@@ -86,9 +86,9 @@ export default function Products() {
   return (
     <div className="min-h-screen bg-slate-50">
       <AdminHeader />
-      <div className="flex gap-6 p-6">
+      <div className="flex flex-col sm:flex-row gap-6 p-4 sm:p-6">
         <AdminSidebar />
-        <main className="flex-1">
+        <main className="flex-1 w-full">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">Products</h2>
             <div className="flex items-center gap-3">
@@ -105,7 +105,8 @@ export default function Products() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4">
+            {/* On mobile: single column. On small screens and up we rely on responsive container sizing; remove multi-column forcing so layout adapts naturally. */}
             {filteredEbooks.map((b) => (
               <EbookCard key={b._id || b.id} book={b} onEdit={(bk) => openEditModal(bk)} onDelete={handleDelete} />
             ))}
