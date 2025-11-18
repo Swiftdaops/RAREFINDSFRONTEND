@@ -6,13 +6,23 @@ import { useForm } from 'react-hook-form'
 import { motion } from 'framer-motion'
 
 function EbookCard({ book, onEdit, onDelete }) {
+  const formatPrice = (p) => {
+    // Handle price as primitive (string/number) or object { amount, currency }
+    if (p && typeof p === 'object') {
+      const amt = p.amount ?? p.value ?? ''
+      const cur = p.currency ?? ''
+      return `${cur ? cur : '₦'}${amt}`
+    }
+    return `₦${p}`
+  }
+
   return (
     <div className="p-4 rounded-xl glass shadow-sm flex flex-col">
       <img src={book.coverUrl} alt={book.title} className="w-full h-48 object-cover rounded" />
       <h3 className="mt-2 font-semibold">{book.title}</h3>
       <div className="text-sm text-slate-600">{book.author}</div>
       <div className="mt-2 flex items-center justify-between">
-        <div className="font-bold">₦{book.price}</div>
+        <div className="font-bold">{formatPrice(book.price)}</div>
         <div className="flex gap-2">
           <button onClick={() => onEdit(book)} className="px-2 py-1 bg-yellow-400 rounded">Edit</button>
           <button onClick={() => onDelete(book._id)} className="px-2 py-1 bg-red-500 text-white rounded">Delete</button>
@@ -86,7 +96,9 @@ function EbookModal({ mode, book, onClose, onCreate, onUpdate }) {
 
   React.useEffect(() => {
     if (mode === 'edit' && book) {
-      reset({ title: book.title, author: book.author, description: book.description, price: book.price })
+      // Ensure price reset is a primitive string/number; handle object shape {amount,currency}
+      const priceVal = book && typeof book.price === 'object' ? (book.price.amount ?? book.price.value ?? '') : book.price
+      reset({ title: book.title, author: book.author, description: book.description, price: priceVal })
     } else {
       reset({ title: '', author: '', description: '', price: '' })
     }
