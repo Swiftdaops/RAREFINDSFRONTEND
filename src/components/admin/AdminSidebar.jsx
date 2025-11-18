@@ -8,7 +8,6 @@ export default function AdminSidebar() {
 
   const sidebarOpen = useAdminStore((s) => s.sidebarOpen)
 
-  // On small screens, the sidebar should be toggleable. On >=sm show always.
   const mobileClass = sidebarOpen ? 'block' : 'hidden'
 
   return (

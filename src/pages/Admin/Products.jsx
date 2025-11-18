@@ -106,7 +106,6 @@ export default function Products() {
           </div>
 
           <div className="grid grid-cols-1 gap-4">
-            {/* On mobile: single column. On small screens and up we rely on responsive container sizing; remove multi-column forcing so layout adapts naturally. */}
             {filteredEbooks.map((b) => (
               <EbookCard key={b._id || b.id} book={b} onEdit={(bk) => openEditModal(bk)} onDelete={handleDelete} />
             ))}
@@ -132,9 +131,8 @@ export default function Products() {
 function EbookModal({ mode, book, onClose, onCreate, onUpdate }) {
   const { register, handleSubmit, reset } = useForm()
 
-  React.useEffect(() => {
+    React.useEffect(() => {
     if (mode === 'edit' && book) {
-      // Ensure price reset is a primitive string/number; handle object shape {amount,currency}
       const priceVal =
         book && typeof book.price === 'object'
         ? (book.price.amount ?? book.price.value ?? '')
@@ -148,7 +146,6 @@ function EbookModal({ mode, book, onClose, onCreate, onUpdate }) {
         coverUrl: book.coverUrl || ''
       }
 
-      // Fetch cover image URL and convert to a File so the form can have the existing image as a file value
       const setDefaultsWithCover = async () => {
         if (book.coverUrl) {
         try {
@@ -158,12 +155,10 @@ function EbookModal({ mode, book, onClose, onCreate, onUpdate }) {
           const ext = (blob.type && blob.type.split('/')[1]) || 'jpg'
           const filename = (book.title ? book.title.replace(/\s+/g, '_') : 'cover') + '.' + ext
           const file = new File([blob], filename, { type: blob.type })
-          // reset with coverImage as array containing the File (react-hook-form will expose this in vals.coverImage)
           reset({ ...defaults, coverImage: [file], coverUrl: book.coverUrl || '' })
           return
         } catch (err) {
           // If fetch fails, fall back to resetting without cover file
-          // console.warn(err)
         }
         }
         reset({ ...defaults, coverImage: [], coverUrl: book.coverUrl || '' })
@@ -185,7 +180,6 @@ function EbookModal({ mode, book, onClose, onCreate, onUpdate }) {
     if (file) {
       fd.append('coverImage', file)
     } else if (vals.coverUrl) {
-      // backend expects `coverImageUrl` when no file is uploaded
       fd.append('coverImageUrl', vals.coverUrl)
     }
 

@@ -3,15 +3,12 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import SearchBar from "../SearchBar";
 import BookCard from "../BookCard";
-// Theme removed — page uses a single visual theme
 
 function BooksPage() {
   const [books, setBooks] = useState([]);
-  // no theme provider — always render the light styles
+  
 
-  // Use flex-1 so the page content fills available space and the footer
-  // stays at the bottom without large built-in padding. Reduce bottom
-  // padding to avoid big gaps under the footer.
+  
   const base = "mx-auto flex-1 flex w-full flex-col px-4 pb-6";
   const themeClass = "light text-stone-950";
 

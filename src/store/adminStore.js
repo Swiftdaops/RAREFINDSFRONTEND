@@ -8,12 +8,11 @@ const useAdminStore = create((set, get) => ({
   ebooks: [],
   sidebarOpen: true,
   modalOpen: false,
-  modalMode: 'add', // 'add' | 'edit'
+  modalMode: 'add',
   selectedBook: null,
 
   setAuthLoading: (v) => set({ authLoading: v }),
 
-  // Sidebar controls for responsive admin UI
   openSidebar: () => set({ sidebarOpen: true }),
   closeSidebar: () => set({ sidebarOpen: false }),
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
@@ -22,7 +21,6 @@ const useAdminStore = create((set, get) => ({
     try {
       set({ authLoading: true })
       await http.post('/api/admin/login', { username, password })
-      // fetch admin
       const { data } = await http.get('/api/admin/me')
       set({ admin: data, authLoading: false })
       toast.success('Logged in')
