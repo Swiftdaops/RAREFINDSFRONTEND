@@ -6,11 +6,17 @@ const useAdminStore = create((set, get) => ({
   admin: null,
   authLoading: false,
   ebooks: [],
+  sidebarOpen: true,
   modalOpen: false,
   modalMode: 'add', // 'add' | 'edit'
   selectedBook: null,
 
   setAuthLoading: (v) => set({ authLoading: v }),
+
+  // Sidebar controls for responsive admin UI
+  openSidebar: () => set({ sidebarOpen: true }),
+  closeSidebar: () => set({ sidebarOpen: false }),
+  toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
 
   login: async (username, password) => {
     try {

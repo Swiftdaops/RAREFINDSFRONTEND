@@ -19,7 +19,7 @@ return (
                     alt="JOHNBOOKS logo"
                     className="h-8 w-8 object-contain rounded"
                 />
-                <span className="text-base  font-bold tracking-tight">
+                <span className="text-base font-bold tracking-tight hidden sm:inline">
                     EBOOKS
                 </span>
             </div>

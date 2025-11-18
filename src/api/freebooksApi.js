@@ -63,5 +63,21 @@ export function getBookAuthor(book) {
 }
 
 export function getCoverImage(book) {
-  return book?.coverImage || null;
+  if (!book) return null;
+
+  // If backend provides a coverImage object (e.g. { url, public_id }) use its url
+  if (book.coverImage && typeof book.coverImage === 'object') {
+    return book.coverImage.url || null;
+  }
+
+  // If coverImage is already a string URL (OpenLibrary search result), return it
+  if (book.coverImage && typeof book.coverImage === 'string') {
+    return book.coverImage;
+  }
+
+  // Fallbacks
+  if (book.coverUrl) return book.coverUrl;
+  if (book.raw && book.raw.cover_i) return `${COVERS_BASE_URL}/${book.raw.cover_i}-M.jpg`;
+
+  return null;
 }

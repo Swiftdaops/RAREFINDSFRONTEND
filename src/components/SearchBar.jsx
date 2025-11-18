@@ -2,7 +2,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Input } from "./ui/input";
 import { motion, AnimatePresence } from "framer-motion";
-import { searchBooks, getBookTitle, getBookAuthor } from "../api/freebooksApi";
+import { getBookTitle, getBookAuthor } from "../api/freebooksApi";
+import { api as http } from "../api/httpClient";
 
 function SearchBar({ onResults }) {
   const [query, setQuery] = useState("");
@@ -24,10 +25,18 @@ function SearchBar({ onResults }) {
     debounceRef.current = setTimeout(async () => {
       try {
         setIsSearching(true);
-        const books = await searchBooks(query, { limit: 12 });
-        setSuggestions(books);
+        // Fetch ebooks from backend and filter client-side
+        const res = await http.get('/api/ebooks');
+        const all = Array.isArray(res.data) ? res.data : [];
+        const q = query.toLowerCase();
+        const filtered = all.filter((b) => {
+          const title = (getBookTitle(b) || '').toLowerCase();
+          const author = (getBookAuthor(b) || '').toLowerCase();
+          return title.includes(q) || author.includes(q);
+        }).slice(0, 12);
+        setSuggestions(filtered);
         setError("");
-        if (onResults) onResults(books);
+        if (onResults) onResults(filtered);
       } catch (e) {
         console.error(e);
         setError("We couldn't reach our library. Try again.");
@@ -71,7 +80,7 @@ function SearchBar({ onResults }) {
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 4 }}
-            className="absolute z-20 mt-1 max-h-64 w-full overflow-y-auto rounded-xl border bg-white/95 shadow-lg sm:hidden"
+            className="absolute z-20 mt-1 max-h-64 w-full overflow-y-auto rounded-xl border bg-white/95 shadow-lg"
           >
             <ul className="divide-y text-xs">
               {suggestions.slice(0, 6).map((book) => (
