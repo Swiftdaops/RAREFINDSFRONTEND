@@ -12,14 +12,6 @@ export default defineConfig({
     },
   },
   server: {
-    proxy: {
-      // Proxy Open Library API requests to avoid CORS in development
-      "/openlibrary": {
-        target: "https://openlibrary.org",
-        changeOrigin: true,
-        secure: true,
-        rewrite: (p) => p.replace(/^\/openlibrary/, ""),
-      },
-    },
+    // proxy removed: OpenLibrary requests are no longer proxied in dev
   },
 })
