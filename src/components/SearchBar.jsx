@@ -25,15 +25,9 @@ function SearchBar({ onResults }) {
     debounceRef.current = setTimeout(async () => {
       try {
         setIsSearching(true);
-        // Fetch ebooks from backend and filter client-side
-        const res = await http.get('/api/ebooks');
-        const all = Array.isArray(res.data) ? res.data : [];
-        const q = query.toLowerCase();
-        const filtered = all.filter((b) => {
-          const title = (getBookTitle(b) || '').toLowerCase();
-          const author = (getBookAuthor(b) || '').toLowerCase();
-          return title.includes(q) || author.includes(q);
-        }).slice(0, 12);
+        // Use the public search endpoint so this works for unauthenticated users
+        const res = await http.get(`/api/public/ebooks?search=${encodeURIComponent(query)}`);
+        const filtered = Array.isArray(res.data) ? res.data.slice(0, 12) : [];
         setSuggestions(filtered);
         setError("");
         if (onResults) onResults(filtered);

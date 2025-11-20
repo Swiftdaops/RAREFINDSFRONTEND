@@ -5,6 +5,7 @@ import AdminHeader from '../../components/admin/AdminHeader'
 import AdminSidebar from '../../components/admin/AdminSidebar'
 import { useForm } from 'react-hook-form'
 import { motion } from 'framer-motion'
+import { api } from '../../api/httpClient'
 
 function EbookCard({ book, onEdit, onDelete }) {
   const formatPrice = (p) => {
@@ -19,7 +20,7 @@ function EbookCard({ book, onEdit, onDelete }) {
   const cover = book?.coverImage?.url || book?.coverUrl || placeholderImg
 
   useEffect(() => {
-    console.debug('EbookCard cover resolved:', { id: book?._id || book?.id, cover })
+    
   }, [cover, book])
 
   return (
@@ -64,19 +65,38 @@ export default function Products() {
   const closeModal = useAdminStore((s) => s.closeModal)
 
   const [query, setQuery] = useState('')
+  const [displayEbooks, setDisplayEbooks] = useState([])
+
+  // Keep a local displayed list so we can fall back to public listing when admin fetch fails.
+  useEffect(() => {
+    setDisplayEbooks(ebooks || [])
+  }, [ebooks])
 
   const filteredEbooks = useMemo(() => {
-    if (!query || !query.trim()) return ebooks || []
+    const source = displayEbooks || []
+    if (!query || !query.trim()) return source
     const q = query.toLowerCase()
-    return (ebooks || []).filter((b) => {
+    return source.filter((b) => {
       const title = (b.title || (b.raw && b.raw.title) || '').toString().toLowerCase()
       const author = (b.author || (b.raw && b.raw.author_name && b.raw.author_name[0]) || '').toString().toLowerCase()
       return title.includes(q) || author.includes(q)
     })
-  }, [ebooks, query])
+  }, [displayEbooks, query])
 
   useEffect(() => {
-    fetchEbooks()
+    const load = async () => {
+      const data = await fetchEbooks()
+      if (!data || data.length === 0) {
+        // fallback: show public ebooks so Products tab isn't empty during development
+        try {
+          const res = await api.get('/api/public/ebooks')
+          setDisplayEbooks(Array.isArray(res.data) ? res.data : [])
+        } catch (err) {
+          console.error('Failed to load public ebooks', err)
+        }
+      }
+    }
+    load()
   }, [])
 
   function handleDelete(id) {

@@ -1,10 +1,12 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import useAdminStore from '../../store/adminStore'
 import { FiMenu, FiX } from 'react-icons/fi'
 
 export default function AdminHeader() {
   const admin = useAdminStore((s) => s.admin)
   const logout = useAdminStore((s) => s.logout)
+  const navigate = useNavigate()
   const sidebarOpen = useAdminStore((s) => s.sidebarOpen)
   const toggleSidebar = useAdminStore((s) => s.toggleSidebar)
 
@@ -25,7 +27,13 @@ export default function AdminHeader() {
 
       <div className="flex items-center gap-4">
         <div className="text-sm">{admin?.username || 'Admin'}</div>
-        <button className="px-3 py-1 rounded bg-red-500 text-white" onClick={logout}>
+        <button
+          className="px-3 py-1 rounded bg-red-500 text-white"
+          onClick={async () => {
+            await logout()
+            navigate('/')
+          }}
+        >
           Logout
         </button>
       </div>

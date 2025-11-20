@@ -10,7 +10,8 @@ export default function Login() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const from = location.state?.from?.pathname || '/admin'
+  // Redirect target after successful admin login (dashboard products page)
+  const from = '/admin/products'
 
   const onSubmit = async (vals) => {
     const ok = await login(vals.username, vals.password)

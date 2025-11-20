@@ -14,10 +14,43 @@ function BookCard({ book, index }) {
   const year = book.year;
   const buyUrl = buildWhatsAppOrderUrl(book);
 
-  React.useEffect(() => {
-    // Helpful debug: log resolved cover URL and identifying info when card renders
-    console.debug('BookCard cover:', { id: book?.id ?? book?._id, title, cover });
-  }, [cover, title, book]);
+  const handleBuy = (e) => {
+    if (!buyUrl) {
+      e.preventDefault();
+      // Import toast if not already imported in this file, or pass it down
+      // Assuming toast is available or we use alert for now if toast isn't imported
+      alert("This book is not available for purchase via WhatsApp yet.");
+      return;
+    }
+    // Allow default <a> behavior
+  };
+
+  const formatBookPrice = (b) => {
+    if (!b) return '';
+    // New shape: price: { amount, currency }
+    const priceObj = b.price;
+    let amount = null;
+    let currency = null;
+    if (priceObj && typeof priceObj === 'object' && priceObj.amount !== undefined) {
+      amount = Number(priceObj.amount) || 0;
+      currency = priceObj.currency || 'NGN';
+    } else if (b.price !== undefined && typeof b.price === 'number') {
+      amount = Number(b.price) || 0;
+      currency = b.currency || 'NGN';
+    } else if (b.price && typeof b.price === 'string') {
+      const parsed = Number(b.price.replace(/[^0-9.-]+/g, ''));
+      amount = Number.isNaN(parsed) ? 0 : parsed;
+      currency = b.currency || 'NGN';
+    }
+
+    const formatter = new Intl.NumberFormat('en-NG');
+    if (amount === null) return '';
+    const formatted = formatter.format(amount);
+    if (currency === 'NGN' || currency === 'NGN') return `₦${formatted}`;
+    return `${currency} ${formatted}`;
+  };
+
+  React.useEffect(() => {}, [cover, title, book]);
 
   return (
     <motion.div
@@ -43,7 +76,6 @@ function BookCard({ book, index }) {
               }}
             />
 
-            {/* decorative overlay (no title to avoid duplicate) */}
             <div className="absolute left-0 right-0 bottom-0 h-10 bg-black/40" />
           </div>
         </CardHeader>
@@ -58,7 +90,7 @@ function BookCard({ book, index }) {
 
         <CardFooter className="px-3 pb-3 pt-1 flex items-center gap-3">
           <div className="flex-1">
-            <div className="text-sm font-bold">{book.priceLabel ?? '₦4,000'}</div>
+            <div className="text-sm font-bold">{book.priceLabel ?? formatBookPrice(book)}</div>
             <div className="text-[11px] text-gray-500">Rare pick</div>
           </div>
 
@@ -66,8 +98,9 @@ function BookCard({ book, index }) {
             <Button
               asChild
               className="h-12 w-full rounded-xl text-[14px] font-medium shadow-sm hover:bg-emerald-700 flex items-center justify-center text-green-950 border-2 border-red-950"
+              disabled={!buyUrl}
             >
-              <a href={buyUrl} target="_blank" rel="noopener noreferrer">
+              <a href={buyUrl || '#'} target="_blank" rel="noopener noreferrer" onClick={handleBuy}>
                 Buy on WhatsApp
               </a>
             </Button>

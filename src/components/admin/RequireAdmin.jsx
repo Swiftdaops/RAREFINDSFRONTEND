@@ -15,7 +15,7 @@ export default function RequireAdmin() {
     const ensure = async () => {
       const data = await checkSession()
       if (!data && mounted) {
-        toast.warn('Please login to access admin')
+        toast.error('Please login to access admin')
         navigate('/admin/login', { state: { from: location }, replace: true })
       }
     }

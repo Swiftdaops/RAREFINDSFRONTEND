@@ -21,12 +21,6 @@ export default function Dashboard() {
             <div className="p-4 rounded-xl glass">Total Books
               <div className="text-2xl font-bold">{ebooks.length}</div>
             </div>
-            <div className="p-4 rounded-xl glass">Coming Soon
-              <div className="text-2xl font-bold">—</div>
-            </div>
-            <div className="p-4 rounded-xl glass">Revenue
-              <div className="text-2xl font-bold">₦0</div>
-            </div>
           </div>
         </main>
       </div>

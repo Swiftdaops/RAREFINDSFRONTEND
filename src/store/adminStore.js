@@ -20,14 +20,17 @@ const useAdminStore = create((set, get) => ({
   login: async (username, password) => {
     try {
       set({ authLoading: true })
-      await http.post('/api/admin/login', { username, password })
+      const res = await http.post('/api/admin/login', { username, password })
+      // Successful login sets cookie; now fetch admin profile
       const { data } = await http.get('/api/admin/me')
-      set({ admin: data, authLoading: false })
-      toast.success('Logged in')
+      set({ admin: data.admin, authLoading: false })
+      toast.success(res?.data?.message || 'Logged in')
       return true
     } catch (err) {
       set({ authLoading: false })
-      const message = err?.response?.data?.message || err.message || 'Login failed'
+      const status = err?.response?.status
+      let message = err?.response?.data?.message || err?.response?.data?.error || err.message || 'Login failed'
+      if (status === 401) message = 'Invalid admin credentials'
       toast.error(message)
       return false
     }
@@ -47,8 +50,8 @@ const useAdminStore = create((set, get) => ({
     try {
       set({ authLoading: true })
       const { data } = await http.get('/api/admin/me')
-      set({ admin: data, authLoading: false })
-      return data
+      set({ admin: data.admin, authLoading: false })
+      return data.admin
     } catch (err) {
       set({ admin: null, authLoading: false })
       return null

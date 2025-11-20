@@ -14,7 +14,7 @@ export async function searchBooks(query, { limit = 12 } = {}) {
     trimmed
   )}&limit=${limit}&fields=title,author_name,cover_i,first_publish_year,key`;
 
-  console.log("🔍 Searching:", url);
+  
 
   let res;
   try {

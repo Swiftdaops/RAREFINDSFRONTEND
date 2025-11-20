@@ -1,5 +1,6 @@
  
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 
 function Navbar() {
@@ -13,18 +14,21 @@ function Navbar() {
 return (
     <nav className={navClassName}>
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-            <div className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-3 no-underline">
                 <img
                     src={logoSrc}
                     alt="JOHNBOOKS logo"
                     className="h-8 w-8 object-contain rounded"
                 />
-                <span className="text-base  font-bold tracking-tight">
-                    EBOOKS
-                </span>
-            </div>
-
-          
+                <span className="text-base font-bold tracking-tight">EBOOKS</span>
+            </Link>
+                <div className="flex items-center gap-3">
+                    <Link to="/owners/signup" className="no-underline">
+                        <div className="rounded-lg border-2 border-black px-3 py-1 text-sm font-medium text-black bg-white/90 hover:brightness-95 animate-pulse">
+                            Sign up
+                        </div>
+                    </Link>
+                </div>
         </div>
 
         
