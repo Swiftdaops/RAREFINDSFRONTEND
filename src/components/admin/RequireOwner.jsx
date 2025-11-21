@@ -19,17 +19,21 @@ export default function RequireOwner() {
         if (!mounted) return
 
         if (!owner) {
+          // No valid owner_jwt or /api/owners/me failed ⇒ kick to login
           toast.error('Owner login required', {
             description: 'Please sign in to manage your bookstore.',
           })
+
           navigate('/owner/login', {
             replace: true,
-            state: { from: loc.pathname },
+            state: { from: loc.pathname }, // so you can redirect back later if you want
           })
         }
       } catch (err) {
         console.error('RequireOwner check failed:', err)
-        navigate('/owner/login', { replace: true })
+        if (mounted) {
+          navigate('/owner/login', { replace: true })
+        }
       } finally {
         if (mounted) setChecking(false)
       }

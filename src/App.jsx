@@ -18,7 +18,7 @@ import { AppThemeListener } from './components/theme/AppThemeListener'
 
 function PublicLayout() {
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50 text-stone-900 dark:bg-slate-950 dark:text-slate-50">
+    <div className="flex min-h-screen flex-col bg-slate-50 text-stone-900 dark:bg-stone-950 dark:text-white">
       <Navbar />
       <main className="flex-1">
         {/* The BooksPage remains the homepage content; other public pages can be added as routes */}
@@ -31,7 +31,7 @@ function PublicLayout() {
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <AppThemeListener />
       <BrowserRouter>
         <Routes>

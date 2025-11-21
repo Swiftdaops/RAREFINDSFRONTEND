@@ -1,26 +1,18 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { ownerApi } from '@/api/ownerapi'
 import { useOwnerStore } from '@/store/ownerStore'
 import { toast } from 'sonner'
 
 export default function OwnerLogin() {
   const { register, handleSubmit, formState } = useForm()
-  const checkSession = useOwnerStore((s) => s.checkSession)
+  const login = useOwnerStore((s) => s.login)
   const navigate = useNavigate()
 
-  const onSubmit = async (values) => {
-    try {
-      await ownerApi.login({ email: values.email, password: values.password })
-      await checkSession()
+  const onSubmit = async ({ email, password }) => {
+    const ok = await login(email, password)
+    if (ok) {
       navigate('/owner/dashboard')
-    } catch (err) {
-      const msg =
-        err?.response?.data?.message ||
-        err?.response?.data?.error ||
-        'Login failed. Check your email/password.'
-      toast.error(msg)
     }
   }
 

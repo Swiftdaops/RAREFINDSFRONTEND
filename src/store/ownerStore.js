@@ -22,14 +22,21 @@ export const useOwnerStore = create((set, get) => ({
   login: async (email, password) => {
     try {
       set({ authLoading: true })
-      // backend: POST /api/owners/login
-      await http.post('/api/owners/login', { email, password })
+      const cleanEmail = email ? email.trim() : ''
+      const cleanPassword = password ? password.trim() : ''
 
-      const { data } = await http.get('/api/owners/me')
-      set({ owner: data.owner, authLoading: false })
-      toast.success('Welcome back', {
-        description: data?.owner?.storeName || 'Store owner logged in',
+      const res = await http.post('/api/owners/login', {
+        email: cleanEmail,
+        password: cleanPassword,
       })
+
+      const owner = res?.data?.owner
+      set({ owner, authLoading: false })
+
+      toast.success(res?.data?.message || 'Welcome back', {
+        description: owner?.storeName || 'Store owner logged in',
+      })
+
       return true
     } catch (err) {
       set({ authLoading: false })

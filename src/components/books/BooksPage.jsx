@@ -10,9 +10,9 @@ function BooksPage() {
 
   
   const base = "mx-auto flex-1 flex w-full flex-col px-4 pb-6";
-  const themeClass = "light text-stone-950";
+  const themeClass = "text-stone-900 dark:text-white";
 
-  const heroSectionClass = "light text-stone-950 mx-auto my-6 max-w-5xl text-center sm:text-left rounded-3xl overflow-hidden";
+  const heroSectionClass = "text-stone-900 dark:text-white mx-auto my-6 max-w-5xl text-center sm:text-left rounded-3xl overflow-hidden";
 
   const heroPanelClass = "relative overflow-hidden rounded-4xl px-4 py-4 shadow-sm sm:px-6 sm:py-5 card";
 
