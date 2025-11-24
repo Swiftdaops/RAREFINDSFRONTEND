@@ -2,8 +2,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Input } from "./ui/input";
 import { motion, AnimatePresence } from "framer-motion";
-import { getBookTitle, getBookAuthor } from "../api/freebooksApi";
 import { api as http } from "../api/httpClient";
+import { getBookTitle, getBookAuthor } from '../lib/utils/book';
+import { searchBooks } from '../lib/dataService';
+
+const mockBooks = [
+  { _id: 'm1', title: "The Great Gatsby (Mock)", author: "F. Scott Fitzgerald" },
+  { _id: 'm2', title: "1984 (Mock)", author: "George Orwell" },
+];
+
+// Helpers to normalize different book shapes returned by various APIs
 
 function SearchBar({ onResults }) {
   const [query, setQuery] = useState("");
@@ -23,25 +31,30 @@ function SearchBar({ onResults }) {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     debounceRef.current = setTimeout(async () => {
-      try {
+        try {
         setIsSearching(true);
-        // Fetch ebooks from backend and filter client-side
-        const res = await http.get('/api/ebooks');
-        const all = Array.isArray(res.data) ? res.data : [];
+        // Use the shared data service which tries multiple public endpoints
+        // and falls back to mock data when none are available.
+        const all = await searchBooks(query)
         const q = query.toLowerCase();
-        const filtered = all.filter((b) => {
-          const title = (getBookTitle(b) || '').toLowerCase();
-          const author = (getBookAuthor(b) || '').toLowerCase();
-          return title.includes(q) || author.includes(q);
-        }).slice(0, 12);
-        setSuggestions(filtered);
+        const filtered = q
+          ? all.filter((b) => {
+              const title = (getBookTitle(b) || '').toLowerCase();
+              const author = (getBookAuthor(b) || '').toLowerCase();
+              return title.includes(q) || author.includes(q);
+            })
+          : all;
+        const slice = filtered.slice(0, 12);
+        setSuggestions(slice);
         setError("");
-        if (onResults) onResults(filtered);
+        if (onResults) onResults(slice);
       } catch (e) {
-        console.error(e);
-        setError("We couldn't reach our library. Try again.");
-        setSuggestions([]);
-        if (onResults) onResults([]);
+        // Network or server error — log and show user-friendly message + fallback
+        // eslint-disable-next-line no-console
+        console.error('SearchBar fetch error', e);
+        setError("We couldn't reach our library. Showing offline results.");
+        setSuggestions(mockBooks);
+        if (onResults) onResults(mockBooks);
       } finally {
         setIsSearching(false);
       }

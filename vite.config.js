@@ -11,7 +11,24 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+
+  // Development proxy to avoid cross-origin cookie issues between Vite (5173)
+  // and the owner backend (5001). This makes requests to `/api/owner` go
+  // to the backend while keeping the browser origin as the Vite server.
   server: {
-    // proxy removed: OpenLibrary requests are no longer proxied in dev
+    // serve on 5174 to match the browser origin used in development
+    port: 5174,
+    host: true,
+    hmr: {
+      port: 5174,
+    },
+    proxy: {
+      '/api/owner': {
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
+
 })

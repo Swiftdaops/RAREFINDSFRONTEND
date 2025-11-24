@@ -3,9 +3,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Card, CardHeader, CardContent, CardFooter } from "./ui/card";
 import { Button } from "./ui/button";
-import { getBookTitle, getBookAuthor, getCoverImage } from "../api/freebooksApi";
-import placeholderImg from "./books/logo.png";
 import { buildWhatsAppOrderUrl } from "../lib/utils/whatsapp";
+import { getBookTitle, getBookAuthor, getCoverImage } from '../lib/utils/book'
 
 function BookCard({ book, index }) {
   const title = getBookTitle(book);
@@ -31,6 +30,9 @@ function BookCard({ book, index }) {
     console.debug('BookCard cover:', { id: book?.id ?? book?._id, title, cover });
   }, [cover, title, book]);
 
+  // Fallback placeholder when cover is missing or fails to load
+  const placeholderImg = 'https://placehold.co/300x420/94A3B8/FFFFFF?text=COVER'
+
   return (
     <motion.div
       layout
@@ -38,10 +40,10 @@ function BookCard({ book, index }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay: index * 0.03, type: "spring", stiffness: 120, damping: 18 }}
     >
-      <Card className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white/90 shadow-sm w-full">
+      <Card className="flex h-full flex-col overflow-hidden rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 shadow-sm w-full">
         <CardHeader className="p-0">
           <div
-            className="relative overflow-hidden bg-slate-100 w-full"
+            className="relative overflow-hidden bg-stone-100 dark:bg-stone-800 w-full"
             style={{ aspectRatio: '950 / 1338', maxWidth: '100%' }}
           >
             <img
@@ -63,21 +65,21 @@ function BookCard({ book, index }) {
         <CardContent className="flex flex-1 flex-col gap-2 px-3 pt-3">
           {/* Title moved here to avoid duplicate titles on the card */}
           <h3 className="line-clamp-2 text-[14px] font-semibold leading-snug">{title}</h3>
-          {author && <div className="text-[11px] text-gray-500">{author} {year && <span>• {year}</span>}</div>}
+          {author && <div className="text-[11px] text-stone-600 dark:text-stone-300">{author} {year && <span>• {year}</span>}</div>}
 
-          <p className="text-[12px] text-gray-600 mt-1">{book.shortDescription || book.description || 'No description available.'}</p>
+          <p className="text-[12px] text-stone-700 dark:text-stone-300 mt-1">{book.shortDescription || book.description || 'No description available.'}</p>
         </CardContent>
 
         <CardFooter className="px-3 pb-3 pt-1 flex items-center gap-3">
           <div className="flex-1">
-            <div className="text-sm font-bold">{priceText}</div>
-            <div className="text-[11px] text-gray-500">Rare pick</div>
+            <div className="text-sm font-bold text-stone-900 dark:text-white">{priceText}</div>
+            <div className="text-[11px] text-stone-600 dark:text-stone-300">Rare pick</div>
           </div>
 
           <div className="w-1/2">
             <Button
               asChild
-              className="h-12 w-full rounded-xl text-[14px] font-medium shadow-sm hover:bg-emerald-700 flex items-center justify-center text-green-950 border-2 border-red-950"
+              className="h-12 w-full rounded-xl text-[14px] font-medium shadow-sm bg-stone-900 dark:bg-stone-200 text-white dark:text-stone-900 flex items-center justify-center border border-stone-700"
             >
               <a href={buyUrl} target="_blank" rel="noopener noreferrer">
                 Buy on WhatsApp

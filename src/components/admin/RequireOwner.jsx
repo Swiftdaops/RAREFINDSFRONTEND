@@ -2,6 +2,8 @@ import React, { useEffect } from 'react'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom'
 import useAdminStore from '../../store/adminStore'
 import { toast } from 'sonner'
+import AdminHeader from './AdminHeader'
+import AdminSidebar from './AdminSidebar'
 
 export default function RequireAdmin() {
   const checkSession = useAdminStore((s) => s.checkSession)
@@ -33,5 +35,15 @@ export default function RequireAdmin() {
 
   if (!admin) return null // redirect handled in effect
 
-  return <Outlet />
+  return (
+    <div className="min-h-screen bg-slate-50">
+      <AdminHeader />
+      <div className="flex">
+        <AdminSidebar />
+        <main className="flex-1 p-6">
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  )
 }

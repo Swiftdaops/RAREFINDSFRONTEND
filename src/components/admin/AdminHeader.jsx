@@ -26,7 +26,18 @@ export default function AdminHeader() {
       </div>
 
       <div className="flex items-center gap-4">
-        <div className="text-sm">{admin?.username || 'Admin'}</div>
+        <div className="flex items-center gap-3">
+          {admin?.profileImage ? (
+            (() => {
+              const p = admin.profileImage
+              const src = typeof p === 'string' && p.startsWith('local:') ? `http://localhost:5001/uploads/${p.replace(/^local:/, '')}` : p
+              return <img src={src} alt="admin avatar" className="h-8 w-8 rounded-full object-cover border" />
+            })()
+          ) : (
+            <div className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center text-xs text-slate-600">A</div>
+          )}
+          <div className="text-sm">{admin?.username || admin?.name || 'Admin'}</div>
+        </div>
         <button
           className="px-3 py-1 rounded bg-red-500 text-white"
           onClick={async () => {

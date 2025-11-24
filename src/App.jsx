@@ -1,36 +1,29 @@
-import React from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Navbar from './components/Navbar'
+import React, { useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import OwnerLogin from './pages/Owner/Login'
+import OwnerRegister from './pages/Owner/Register.jsx'
+import OwnerDashboard from './pages/Owner/Dashboard'
+// Use BooksPage as the homepage (includes SearchBar)
 import BooksPage from './components/books/BooksPage'
-import Footer from './components/Footer'
-import RequireAdmin from './components/admin/RequireAdmin'
-import AdminLogin from './pages/Admin/Login'
-import AdminDashboard from './pages/Admin/Dashboard'
-import AdminProducts from './pages/Admin/Products'
-
-function PublicLayout() {
-  return (
-    <div className="flex min-h-screen flex-col bg-slate-50 text-stone-900">
-      <Navbar />
-      <BooksPage />
-      <Footer />
-    </div>
-  )
-}
+import AppLayout from './layouts/AppLayout'
+import RequireOwner from './components/RequireOwner'
+import useOwnerStore from './store/ownerStore'
 
 function App() {
+  // restore owner session from httpOnly cookie (if present)
+  // Session is restored at the app root by `OwnerAuthProvider`.
+  // Keep App free of side-effectful session startup to avoid duplicate runs.
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<PublicLayout />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
+        {/* Owner routes only */}
+        <Route path="/owner/login" element={<OwnerLogin />} />
+        <Route path="/owner/register" element={<OwnerRegister />} />
+        <Route path="/owner/dashboard" element={<RequireOwner><OwnerDashboard /></RequireOwner>} />
 
-        <Route path="/admin" element={<RequireAdmin />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="products" element={<AdminProducts />} />
-          <Route path="orders" element={<div className="p-6">Orders (coming soon)</div>} />
-          <Route path="customers" element={<div className="p-6">Customers (coming soon)</div>} />
-        </Route>
+        <Route path="/" element={<AppLayout><BooksPage /></AppLayout>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )
