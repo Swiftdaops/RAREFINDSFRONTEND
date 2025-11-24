@@ -20,6 +20,12 @@ export function getCoverImage(b) {
   if (b.thumbnail) return b.thumbnail
   if (b.cover && b.cover.url) return b.cover.url
   if (b.volumeInfo && b.volumeInfo.imageLinks && b.volumeInfo.imageLinks.thumbnail) return b.volumeInfo.imageLinks.thumbnail
-  if (typeof b.coverImage === 'string' && b.coverImage.startsWith('local:')) return `http://localhost:5001/uploads/${b.coverImage.replace(/^local:/, '')}`
+  // Map legacy `local:` URLs to the configured owner backend base (VITE_OWNER_BACKEND_URL)
+  if (typeof b.coverImage === 'string' && b.coverImage.startsWith('local:')) {
+    const key = b.coverImage.replace(/^local:/, '')
+    // Prefer explicit owner backend URL (set in .env as VITE_OWNER_BACKEND_URL)
+    const ownerBase = import.meta.env.VITE_OWNER_BACKEND_URL || (typeof window !== 'undefined' ? window.location.origin.replace(/:\d+$/, ':5001') : 'http://localhost:5001')
+    return `${String(ownerBase).replace(/\/$/, '')}/uploads/${key}`
+  }
   return null
 }
